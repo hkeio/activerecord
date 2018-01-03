@@ -1,4 +1,4 @@
-import { ActiveRecord } from './../ActiveRecord/ActiveRecord';
+import { ActiveRecord } from './ActiveRecord';
 
 export abstract class ActiveQuery {
 
@@ -69,6 +69,6 @@ export abstract class ActiveQuery {
     return this;
   }
 
-  public abstract one(map?: boolean): Promise<any> & any;
-  public abstract all(map?: boolean): Promise<any[]> & any[];
+  public abstract one(map?: boolean): any;
+  public abstract all(map?: boolean): any[];
 }

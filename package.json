@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "postversion": "git push && npm publish",
-    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+    "test": "mocha -r ts-node/register test/*.spec.ts"
   },
   "repository": {
     "type": "git",

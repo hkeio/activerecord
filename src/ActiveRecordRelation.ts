@@ -1,4 +1,4 @@
-import { Model, ModelAttribute } from './../Model/Model';
+import { Model, ModelAttribute } from './Model';
 import { ActiveRecord } from './ActiveRecord';
 
 const ActiveRecordRelationType = {
@@ -94,7 +94,8 @@ export class ActiveRecordRelation extends Model {
 
   private _initHasOne(model, condition) {
     // add property to class
-    this._child.addAttributes([new ModelAttribute(model[this._property], 'string')]);
+    model.class.addAttributes([new ModelAttribute(this._property, 'string')]);
+    model.setAttribute(this._property, null);
 
     Object.defineProperty(model, this._label.original, {
       get: () => this._child.findOne(model[this._property]),

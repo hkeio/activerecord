@@ -1,6 +1,6 @@
-import { equal } from 'assert';
+import { equal, deepEqual } from 'assert';
 
-import { Model, ModelAttribute } from './Model';
+import { Model, ModelAttribute } from './../src/';
 
 describe('Model', () => {
 
@@ -22,7 +22,7 @@ describe('Model', () => {
     equal(typeof model.getAttribute, 'function');
 
     // non-static getter
-    equal(JSON.stringify(model.attributes), '{}');
+    deepEqual(model.attributes, {});
     equal(model.className, 'Model');
   });
 
@@ -33,12 +33,12 @@ describe('Model', () => {
 
     let values = { foo: 'bar' };
     model2 = new Model(values);
-    equal(JSON.stringify(model2.attributes), JSON.stringify(values));
+    deepEqual(model2.attributes, values);
   });
 
   it('should set attribute', () => {
     model2.setAttribute('foo', 'baz');
-    equal(JSON.stringify(model2.attributes), JSON.stringify({ foo: 'baz' }));
+    deepEqual(model2.attributes, { foo: 'baz' });
     equal(model2.foo, 'baz');
     equal(model2.getAttribute('foo'), 'baz');
   });

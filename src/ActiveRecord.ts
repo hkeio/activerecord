@@ -1,5 +1,5 @@
-import { ActiveQuery } from './../ActiveQuery/ActiveQuery';
-import { Model, ModelAttribute } from './../Model/Model';
+import { ActiveQuery } from './ActiveQuery';
+import { Model, ModelAttribute } from './Model';
 import { ActiveRecordRelation } from './ActiveRecordRelation';
 
 export interface ActiveRecordConfig {
@@ -80,12 +80,14 @@ export abstract class ActiveRecord extends Model {
     return this._class;
   }
 
-  get id(): string {
-    return this.getAttribute(this._class._config.identifier);
+  get id(): string | number {
+    return this.getAttribute(this._class.config.identifier);
   }
 
-  set id(value: string) {
-    throw new Error('Property id cannot be set!');
+  set id(value: string | number) {
+    if (!this.id) {
+      this.setAttribute(this._class.config.identifier, value);
+    }
   }
 
   get isNewRecord(): boolean {
@@ -94,7 +96,7 @@ export abstract class ActiveRecord extends Model {
 
   /* Querying methods */
 
-  public static find() {
+  public static find(): ActiveQuery & any {
     this.init();
     return new this.config.queryClass(this);
   }
@@ -104,8 +106,10 @@ export abstract class ActiveRecord extends Model {
 
     // condition is id
     if (typeof condition === 'string') {
+      let idCondition = {};
+      idCondition[this.config.identifier] = condition;
       return this.find()
-        .where({ '_id': condition })
+        .where(idCondition)
         .one();
     }
 
