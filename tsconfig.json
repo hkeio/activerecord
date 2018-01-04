@@ -4,8 +4,7 @@
     "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "outDir": "dist",
-    "sourceMap": true,
+    "outDir": "types",
     "lib": [
       "dom",
       "es6"
@@ -16,7 +15,7 @@
     "declaration": true
   },
   "exclude": [
-    "dist",
+    "types",
     "node_modules",
     "**/*.spec.ts"
   ]

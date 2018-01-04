@@ -1,10 +1,11 @@
 {
   "name": "@hke/activerecord",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Typescript ORM-style base models",
-  "main": "dist/index.js",
+  "main": "index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "webpack",
     "preversion": "npm run build",
     "postversion": "git push && npm publish",
     "test": "mocha -r ts-node/register test/*.spec.ts"
@@ -13,7 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/hkeio/activerecord.git"
   },
-  "author": "",
+  "author": "Heiko Holland",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/hkeio/activerecord/issues"
@@ -22,8 +23,12 @@
   "devDependencies": {
     "@types/mocha": "^2.2.44",
     "@types/node": "^8.5.2",
+    "app-root-path": "^2.0.1",
     "mocha": "^3.4.2",
+    "ts-loader": "^3.2.0",
     "ts-node": "^3.3.0",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "uglifyjs-webpack-plugin": "^1.1.5",
+    "webpack": "^3.10.0"
   }
 }

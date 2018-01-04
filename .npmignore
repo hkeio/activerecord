@@ -7,4 +7,9 @@ Thumbs.db
 .DS_Store
 
 # Ignored files
-dist
+*.ts
+!*.d.ts
+.editorconfig
+tsconfig.json
+
+src/tests
