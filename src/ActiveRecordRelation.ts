@@ -147,7 +147,7 @@ export class ActiveRecordRelation extends Model {
       });
 
       // save all objects
-      await this._child.save(objects);
+      return await this._child.save(objects);
     }
   }
 
@@ -207,13 +207,15 @@ export class ActiveRecordRelation extends Model {
       const existing = await this._intermediate.findAll(condition);
       console.log('@todo: check existing');
 
+      let results = [];
       for (let object of objects) {
         let data = {};
         data[this._key] = model.id;
         data[this._foreignKey] = object.id;
         let relation = new this._intermediate(data);
-        await relation.save();
+        results.push(await relation.save());
       }
+      return results;
     }
   }
 }

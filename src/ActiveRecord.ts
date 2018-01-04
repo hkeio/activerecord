@@ -27,6 +27,7 @@ export abstract class ActiveRecord extends Model {
 
   constructor(values?) {
     super(values);
+    // console.log('zz', this);
     this._class.init();
     this._initRelations();
   }
@@ -45,6 +46,7 @@ export abstract class ActiveRecord extends Model {
   }
 
   public static initialized(model: string) {
+    // console.log('a', model);
     this._initialized[model] = true;
   }
 
@@ -59,6 +61,8 @@ export abstract class ActiveRecord extends Model {
   }
 
   public static init() {
+    // console.log('aa', this.config.tableName);
+    // console.log('ab', this._initialized);
     if (this._initialized[this.config.tableName]) {
       return;
     }
@@ -125,4 +129,17 @@ export abstract class ActiveRecord extends Model {
   }
 
   public abstract save(): Promise<this>;
+
+  // @initDb()
+  public static async save(objects): Promise<any[]> {
+    console.log('qwe');
+    throw new Error('Model.save() needs to be set!');
+  };
 }
+
+// function initDb() {
+//   return function (target: typeof ActiveRecord, propertyKey: string, descriptor: PropertyDescriptor) {
+//     console.log('init ' + target.name)
+//     target.init();
+//   }
+// }
