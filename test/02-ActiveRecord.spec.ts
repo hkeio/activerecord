@@ -3,13 +3,14 @@ import { equal, deepEqual } from 'assert';
 import { ActiveQuery, ActiveRecord, ActiveRecordRelation, ModelAttribute } from './../src';
 
 export class TestQuery extends ActiveQuery {
-  one() { }
-  all() { return []; }
+  one() { return Promise.resolve(); }
+  all() { return Promise.resolve([]); }
 }
 
 export class TestRecord extends ActiveRecord {
   save() {
     this.id = Math.random();
+    return Promise.resolve(this);
   }
 }
 
@@ -21,8 +22,8 @@ class Bar extends TestRecord {
     new ModelAttribute('boo')
   ];
 }
-class Foo_Bar extends TestRecord { save() { } }
-class FooChild extends TestRecord { save() { } }
+class Foo_Bar extends TestRecord { }
+class FooChild extends TestRecord { }
 class Foo extends TestRecord {
   foo?: string;
   goo?: number;

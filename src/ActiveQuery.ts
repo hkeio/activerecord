@@ -69,6 +69,6 @@ export abstract class ActiveQuery {
     return this;
   }
 
-  public abstract one(map?: boolean): any;
-  public abstract all(map?: boolean): any[];
+  public abstract one(map?: boolean): Promise<any>;
+  public abstract all(map?: boolean): Promise<any[]>;
 }

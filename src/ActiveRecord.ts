@@ -39,9 +39,9 @@ export abstract class ActiveRecord extends Model {
     return this.class.db[this.class.config.tableName];
   }
 
-  protected static _dbInit() {
+  protected static _dbInit(): Promise<boolean> {
     this.initialized(this.config.tableName);
-    return true;
+    return Promise.resolve(true);
   }
 
   public static initialized(model: string) {
@@ -101,7 +101,7 @@ export abstract class ActiveRecord extends Model {
     return new this.config.queryClass(this);
   }
 
-  public static findOne(condition: any = {}): ActiveRecord & any {
+  public static findOne(condition: any = {}): Promise<ActiveRecord & any> {
     this.init();
 
     // condition is id
@@ -118,11 +118,11 @@ export abstract class ActiveRecord extends Model {
       .one();
   }
 
-  public static findAll(condition = {}): ActiveRecord[] & any[] {
+  public static findAll(condition = {}): Promise<ActiveRecord[] & any[]> {
     return this.find()
       .where(condition)
       .all();
   }
 
-  public abstract save(): any;
+  public abstract save(): Promise<this>;
 }
