@@ -107,7 +107,7 @@ export class ActiveRecordRelation extends Model {
         object = new this._child(object);
       }
       await object.save();
-      model[this._property] = object.id;
+      model[this._property] = object[this._child.config.identifier];
     }
   }
 
@@ -118,14 +118,15 @@ export class ActiveRecordRelation extends Model {
     // set getter `child` property
     Object.defineProperty(model, this._label.plural, {
       get: async () => {
-        condition[this._property] = model.id;
+        await this._child.init();
+        condition[this._property] = model[this._child.config.identifier];
         return await new model.class.config.queryClass(this._child).where(condition).all();
       },
     });
 
     // add `getChild()` method
     model['get' + this._label.capitalizedPlural] = async () => {
-      condition[this._property] = model.id;
+      condition[this._property] = model[this._child.config.identifier];
       return await new model.class.config.queryClass(this._child).where(condition);
     };
 
@@ -142,7 +143,7 @@ export class ActiveRecordRelation extends Model {
 
       // set parent model id in children models
       objects = objects.map((object) => {
-        object[this._property] = model.id;
+        object[this._property] = model[this._child.config.identifier];
         return object;
       });
 
@@ -158,7 +159,8 @@ export class ActiveRecordRelation extends Model {
     // set getter `child` property
     Object.defineProperty(model, this._label.plural, {
       get: async () => {
-        condition[this._key] = model.id;
+        await this._child.init();
+        condition[this._key] = model.getAttribute(model.class.config.identifier);
         const res = await this._intermediate.find()
           .where(condition)
           .fields([this._foreignKey])
@@ -166,9 +168,6 @@ export class ActiveRecordRelation extends Model {
         if (!res.length) {
           return [];
         }
-
-        console.log(res);
-        // console.log(await this._intermediate.findAll());
 
         let ids = res.map((doc) => doc.getAttribute(this._foreignKey)).filter(Boolean);
         let queryCondition = {};
@@ -181,7 +180,7 @@ export class ActiveRecordRelation extends Model {
 
     // add `getChild()` method
     model['get' + this._label.capitalizedPlural] = async () => {
-      condition[this._key] = model.id;
+      condition[this._key] = model.getAttribute(this._child.config.identifier);
       const res = await this._intermediate.find()
         .where(condition)
         .fields([this._foreignKey])
@@ -210,21 +209,30 @@ export class ActiveRecordRelation extends Model {
       }
 
       // save all objects
-      const results = await this._child.save(objects);
+      const savedObjects = await this._child.save(objects);
 
       let condition = {};
-      condition[this._foreignKey] = { $in: objects.map((object) => object.id) };
+      condition[this._foreignKey] = { $in: savedObjects.map((object) => object.getAttribute(this._child.config.identifier)) };
       const existingRelations = await this._intermediate.findAll(condition);
-      console.log('@todo: check existing');
 
-      for (let object of objects) {
-        let data = {};
-        data[this._key] = model.id;
-        data[this._foreignKey] = object.id;
-        let relation = new this._intermediate(data);
-        await relation.save();
+      for (let object of savedObjects) {
+        var found = false;
+
+        if (existingRelations.length) {
+          existingRelations.forEach((existing) => {
+            found = found || object.getAttribute(this._child.config.identifier) === existing.getAttribute(this._foreignKey);
+          });
+        }
+
+        if (!found) {
+          let data = {};
+          data[this._key] = model.getAttribute(this._child.config.identifier);
+          data[this._foreignKey] = object.getAttribute(this._child.config.identifier);
+          let relation = new this._intermediate(data);
+          await relation.save();
+        }
       }
-      return results;
+      return savedObjects;
     }
   }
 }

@@ -59,7 +59,7 @@ export abstract class ActiveRecord extends Model {
     });
   }
 
-  public static init() {
+  public static async init() {
     if (this._initialized[this._tableName]) {
       return;
     }
@@ -70,7 +70,7 @@ export abstract class ActiveRecord extends Model {
       queryClass: this._queryClass || this._defaultConfig.queryClass
     };
 
-    this._dbInit();
+    return this._dbInit();
   }
 
   private _initRelations() {

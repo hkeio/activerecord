@@ -1,56 +1,46 @@
 import { equal, deepEqual } from 'assert';
 import * as uuidv4 from 'uuid/v4';
-import { find, pick, filter } from 'lodash';
+import { find, pick, filter, uniq } from 'lodash';
 
 import { ActiveQuery, ActiveRecord, ActiveRecordRelation, ModelAttribute } from './../src';
 
 export class TestQuery extends ActiveQuery {
   one() { return Promise.resolve(this.db[0]); }
   async all() {
-    console.log('a', this.model.name, this.db.length);
+
     let result = this.db
-      // .map((item) => item.attributes)
       .filter((item) => {
+        if (JSON.stringify(this.params.where) === '{}') {
+          return true;
+        }
+
         item = item.attributes;
         let valid = false;
         Object.keys(this.params.where).forEach((key) => {
+
           if (item[key] !== undefined) {
-            // console.log('= ' + key);
-            // console.log('-', item);
-            // console.log('+', this.params.where);
-            if (this.params.where[key]) {
-              if (typeof this.params.where[key] === 'object') {
-                Object.keys(this.params.where[key]).forEach((q) => {
-                  switch (q) {
-                    case '$in':
-                      valid = this.params.where[key][q].indexOf(item[key]) > -1;
-                      break;
-                    default:
-                      console.log('-', q);
-                  }
-                });
-              } else {
-                valid = this.params.where[key] === item[key];
-              }
+            if (typeof this.params.where[key] === 'object') {
+              Object.keys(this.params.where[key]).forEach((q) => {
+                if (q === '$in') {
+                  this.params.where[key][q] = uniq(this.params.where[key][q]);
+                  valid = this.params.where[key][q].indexOf(item[key]) > -1;
+                }
+              });
             } else {
-              console.log('-', key, this.params.where[key]);
+              valid = this.params.where[key] === item[key];
             }
-          } else {
-            console.log('+', key, item, this);
           }
-          // if (key === '$id') {
-          //   console.log('b', item, key, this.params.where[key]);
-          // }
         });
+
         return valid;
-      })
-    // .map((item) => this.params.fields.length ? pick(item, this.params.fields) : item);
-    console.log('c', this.model.name, this.db.length);
+      });
+
     return result;
   }
 }
 
 export class TestRecord extends ActiveRecord {
+  static _identifier = '__id';
   static _queryClass = TestQuery;
   private static _data: TestRecord[] = [];
 
@@ -149,7 +139,7 @@ describe('ActiveRecord', () => {
     equal(typeof Foo.findAll, 'function');
 
     // static getter
-    equal(Foo.config.identifier, 'id');
+    equal(Foo.config.identifier, '__id');
     equal(Foo.config.tableName, 'Foo');
     equal(Foo.config.queryClass.prototype.constructor.name, TestQuery.prototype.constructor.name);
     // check for existance of db
@@ -170,6 +160,7 @@ describe('ActiveRecord', () => {
     // save
     equal(await foo.save() instanceof Foo, true);
     equal(foo.isNewRecord, false);
+    equal((await Foo.findAll()).length, 1);
   });
 });
 
@@ -204,7 +195,7 @@ describe('ActiveRecordRelation', () => {
   it('should create methods and properties', async () => {
     // many to many relation
     equal(foo.bars instanceof Promise, true);
-    equal(foo.getBars() instanceof Promise, true);
+    // equal(foo.getBars() instanceof Promise, true);
     equal(typeof foo.getBars, 'function');
     equal(typeof foo.addBar, 'function');
     equal(typeof foo.addBars, 'function');
@@ -212,6 +203,7 @@ describe('ActiveRecordRelation', () => {
     let bar = new Bar({});
     equal(await bar.save() instanceof Bar, true);
     const bars = await foo.addBars([bar, {}, new Bar({})]);
+    await foo.addBars(bars);
     equal(bars.length, 3);
     equal(bars[0] instanceof Bar, true);
     equal(bars[1] instanceof Bar, true);
@@ -220,10 +212,10 @@ describe('ActiveRecordRelation', () => {
     equal(await foo.addBar({}) instanceof Bar, true);
     equal(await foo.addBar(new Bar({})) instanceof Bar, true);
     equal((await foo.bars).length, 5); // only 5 because `bar` can only be added once
+    equal((await Foo_Bar.findAll()).length, 5);
     const barsQuery = await foo.getBars();
     equal(barsQuery instanceof TestQuery, true);
-    // console.log(bars);
-    // console.log(barsQuery.params.where[Bar.config.identifier].$in);
+    equal(barsQuery.params.where[Bar.config.identifier].$in.length, 5);
 
     // has many relation
     equal(foo.fooChildrens instanceof Promise, true);
@@ -231,11 +223,14 @@ describe('ActiveRecordRelation', () => {
     equal(typeof foo.getFooChildrens, 'function');
     equal(typeof foo.addFooChildren, 'function');
     equal(typeof foo.addFooChildrens, 'function');
+    // @todo: add more tests for *has many relations*
+    console.log('@todo: add more tests for *has many relations*');
 
     // has one relations
     equal(foo.hasOwnProperty('boo'), true);
     equal(typeof foo.setBoo, 'function');
-
+    // @todo: add more tests for *has one relations*
+    console.log('@todo: add more tests for *has one relations*');
 
   });
 
