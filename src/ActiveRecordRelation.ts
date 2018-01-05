@@ -166,9 +166,15 @@ export class ActiveRecordRelation extends Model {
         if (!res.length) {
           return [];
         }
-        const ids = res.map((doc) => doc[this._foreignKey]);
+
+        console.log(res);
+        // console.log(await this._intermediate.findAll());
+
+        let ids = res.map((doc) => doc.getAttribute(this._foreignKey)).filter(Boolean);
+        let queryCondition = {};
+        queryCondition[this._child.config.identifier] = { $in: ids };
         return await new model.class.config.queryClass(this._child)
-          .where({ _id: { $in: ids } })
+          .where(queryCondition)
           .all();
       }
     });
@@ -183,14 +189,18 @@ export class ActiveRecordRelation extends Model {
       if (!res.length) {
         return [];
       }
-      const ids = res.map((doc) => doc[this._foreignKey]);
+
+      let ids = res.map((doc) => doc.getAttribute(this._foreignKey)).filter(Boolean);
+      let queryCondition = {};
+      queryCondition[this._child.config.identifier] = { $in: ids };
       return await new model.class.config.queryClass(this._child)
-        .where({ _id: { $in: ids } });
+        .where(queryCondition);
     };
 
     // add `addChild()` method
     model['add' + this._label.capitalizedSingular] = async (object: any) => {
-      return model['add' + this._label.capitalizedPlural]([object]);
+      const res = await model['add' + this._label.capitalizedPlural]([object]);
+      return res[0];
     }
 
     // add `addChildren()` method
@@ -200,20 +210,19 @@ export class ActiveRecordRelation extends Model {
       }
 
       // save all objects
-      await this._child.save(objects);
+      const results = await this._child.save(objects);
 
       let condition = {};
       condition[this._foreignKey] = { $in: objects.map((object) => object.id) };
-      const existing = await this._intermediate.findAll(condition);
+      const existingRelations = await this._intermediate.findAll(condition);
       console.log('@todo: check existing');
 
-      let results = [];
       for (let object of objects) {
         let data = {};
         data[this._key] = model.id;
         data[this._foreignKey] = object.id;
         let relation = new this._intermediate(data);
-        results.push(await relation.save());
+        await relation.save();
       }
       return results;
     }

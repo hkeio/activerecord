@@ -1,17 +1,72 @@
 import { equal, deepEqual } from 'assert';
+import * as uuidv4 from 'uuid/v4';
+import { find, pick, filter } from 'lodash';
 
 import { ActiveQuery, ActiveRecord, ActiveRecordRelation, ModelAttribute } from './../src';
 
 export class TestQuery extends ActiveQuery {
-  one() { return Promise.resolve(); }
-  all() { return Promise.resolve([]); }
+  one() { return Promise.resolve(this.db[0]); }
+  async all() {
+    console.log('a', this.model.name, this.db.length);
+    let result = this.db
+      // .map((item) => item.attributes)
+      .filter((item) => {
+        item = item.attributes;
+        let valid = false;
+        Object.keys(this.params.where).forEach((key) => {
+          if (item[key] !== undefined) {
+            // console.log('= ' + key);
+            // console.log('-', item);
+            // console.log('+', this.params.where);
+            if (this.params.where[key]) {
+              if (typeof this.params.where[key] === 'object') {
+                Object.keys(this.params.where[key]).forEach((q) => {
+                  switch (q) {
+                    case '$in':
+                      valid = this.params.where[key][q].indexOf(item[key]) > -1;
+                      break;
+                    default:
+                      console.log('-', q);
+                  }
+                });
+              } else {
+                valid = this.params.where[key] === item[key];
+              }
+            } else {
+              console.log('-', key, this.params.where[key]);
+            }
+          } else {
+            console.log('+', key, item, this);
+          }
+          // if (key === '$id') {
+          //   console.log('b', item, key, this.params.where[key]);
+          // }
+        });
+        return valid;
+      })
+    // .map((item) => this.params.fields.length ? pick(item, this.params.fields) : item);
+    console.log('c', this.model.name, this.db.length);
+    return result;
+  }
 }
 
 export class TestRecord extends ActiveRecord {
-  save() {
-    this.id = Math.random();
-    return Promise.resolve(this);
+  static _queryClass = TestQuery;
+  private static _data: TestRecord[] = [];
+
+  protected static _dbInit(): Promise<boolean> {
+    this._db[this.config.tableName] = [];
+    return super._dbInit();
   }
+
+  save() {
+    if (!this.id) {
+      this.id = uuidv4();
+      this._class.db.push(this);
+    }
+    return Promise.resolve(find(this._class.db, { id: this.id }));
+  }
+
   static async save(objects) {
     let result = [];
     for (let object of objects) {
@@ -47,20 +102,19 @@ class Foo extends TestRecord {
 
   bars?: Bar[];
   getBars?: () => Promise<ActiveQuery>;
-  addBar?: (object: any | Bar) => Promise<void>;
-  addBars?: (pbjects: any[] | Bar[]) => Promise<void>;
+  addBar?: (object: any | Bar) => Promise<this>;
+  addBars?: (pbjects: any[] | Bar[]) => Promise<this[]>;
 
   fooChildrens?: FooChild[];
   getFooChildrens?: () => Promise<ActiveQuery>;
-  addFooChildren?: (object: any | FooChild) => Promise<void>;
-  addFooChildrens?: (objects: any[] | FooChild[]) => Promise<void>;
+  addFooChildren?: (object: any | FooChild) => Promise<this>;
+  addFooChildrens?: (objects: any[] | FooChild[]) => Promise<this[]>;
 
   boo?: Boo;
   boo_id?: string;
   setBoo?: (object: any | Boo) => Promise<void>;
 
   static _tableName = 'Foo';
-  static _queryClass = TestQuery;
 
   public static _attributes: ModelAttribute[] = [
     new ModelAttribute('foo'),
@@ -87,7 +141,7 @@ let foo = new Foo(values);
 
 describe('ActiveRecord', () => {
 
-  it('should be instance of ActiveRecord', () => {
+  it('should be instance of ActiveRecord', async () => {
 
     // static methods
     equal(typeof Foo.find, 'function');
@@ -112,6 +166,10 @@ describe('ActiveRecord', () => {
     // attributes
     equal(foo.hasOwnProperty('foo'), true);
     equal(foo.hasOwnProperty('goo'), true);
+
+    // save
+    equal(await foo.save() instanceof Foo, true);
+    equal(foo.isNewRecord, false);
   });
 });
 
@@ -151,6 +209,22 @@ describe('ActiveRecordRelation', () => {
     equal(typeof foo.addBar, 'function');
     equal(typeof foo.addBars, 'function');
 
+    let bar = new Bar({});
+    equal(await bar.save() instanceof Bar, true);
+    const bars = await foo.addBars([bar, {}, new Bar({})]);
+    equal(bars.length, 3);
+    equal(bars[0] instanceof Bar, true);
+    equal(bars[1] instanceof Bar, true);
+    equal(bars[2] instanceof Bar, true);
+    equal(await foo.addBar(bar) instanceof Bar, true);
+    equal(await foo.addBar({}) instanceof Bar, true);
+    equal(await foo.addBar(new Bar({})) instanceof Bar, true);
+    equal((await foo.bars).length, 5); // only 5 because `bar` can only be added once
+    const barsQuery = await foo.getBars();
+    equal(barsQuery instanceof TestQuery, true);
+    // console.log(bars);
+    // console.log(barsQuery.params.where[Bar.config.identifier].$in);
+
     // has many relation
     equal(foo.fooChildrens instanceof Promise, true);
     equal(foo.getFooChildrens() instanceof Promise, true);
@@ -162,13 +236,7 @@ describe('ActiveRecordRelation', () => {
     equal(foo.hasOwnProperty('boo'), true);
     equal(typeof foo.setBoo, 'function');
 
-    let bar = new Bar({});
-    console.log('a', await bar.save());
-    console.log('b', await foo.addBar(bar));
-    console.log('c', await foo.addBar({}));
-    console.log('d', await foo.addBar(new Bar({})));
-    const bars = await foo.bars;
-    equal(bars.length, 3);
+
   });
 
 });

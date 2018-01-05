@@ -33,7 +33,7 @@ export abstract class ActiveQuery {
   }
 
   public get db() {
-    return this._db[this.model.className];
+    return this._db;
   }
 
   public get model() {

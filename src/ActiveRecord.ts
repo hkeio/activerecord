@@ -16,28 +16,28 @@ export abstract class ActiveRecord extends Model {
   protected static _tableName: string;
   protected static _queryClass: any;
 
-  private static _config: ActiveRecordConfig = {
+  private static _defaultConfig: ActiveRecordConfig = {
     identifier: 'id',
     tableName: 'ActiveRecord',
     queryClass: ActiveQuery
   };
 
+  private static _config: { [model: string]: ActiveRecordConfig; } = {};
   protected static _db: { [model: string]: any; } = {};
   private static _initialized: { [model: string]: boolean; } = {};
 
   constructor(values?) {
     super(values);
-    // console.log('zz', this);
     this._class.init();
     this._initRelations();
   }
 
   static get db() {
-    return this._db;
+    return this._db[this.config.tableName];
   }
 
   get db() {
-    return this.class.db[this.class.config.tableName];
+    return this._class.db[this._class.config.tableName];
   }
 
   protected static _dbInit(): Promise<boolean> {
@@ -46,12 +46,11 @@ export abstract class ActiveRecord extends Model {
   }
 
   public static initialized(model: string) {
-    // console.log('a', model);
     this._initialized[model] = true;
   }
 
   public static get config() {
-    return this._config;
+    return this._config[this._tableName];
   }
 
   public static set config(config) {
@@ -61,15 +60,15 @@ export abstract class ActiveRecord extends Model {
   }
 
   public static init() {
-    // console.log('aa', this.config.tableName);
-    // console.log('ab', this._initialized);
-    if (this._initialized[this.config.tableName]) {
+    if (this._initialized[this._tableName]) {
       return;
     }
 
-    this._config.identifier = this._identifier || this._config.identifier;
-    this._config.tableName = this._tableName || this._config.tableName;
-    this._config.queryClass = this._queryClass || this._config.queryClass;
+    this._config[this._tableName] = {
+      identifier: this._identifier || this._defaultConfig.identifier,
+      tableName: this._tableName || this._defaultConfig.tableName,
+      queryClass: this._queryClass || this._defaultConfig.queryClass
+    };
 
     this._dbInit();
   }
@@ -130,16 +129,7 @@ export abstract class ActiveRecord extends Model {
 
   public abstract save(): Promise<this>;
 
-  // @initDb()
   public static async save(objects): Promise<any[]> {
-    console.log('qwe');
     throw new Error('Model.save() needs to be set!');
   };
 }
-
-// function initDb() {
-//   return function (target: typeof ActiveRecord, propertyKey: string, descriptor: PropertyDescriptor) {
-//     console.log('init ' + target.name)
-//     target.init();
-//   }
-// }
