@@ -1,6 +1,6 @@
 {
   "name": "@hke/activerecord",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Typescript ORM-style base models",
   "main": "index.js",
   "types": "./types/index.d.ts",
