@@ -22,5 +22,6 @@ module.exports = {
       exclude: `${root}/node_modules`,
       loader: 'ts-loader'
     }]
-  }
+  },
+  devtool: "cheap-eval-source-map"
 };
