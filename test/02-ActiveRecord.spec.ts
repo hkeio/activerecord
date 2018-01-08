@@ -102,7 +102,7 @@ class Foo extends TestRecord {
 
   boo?: Boo;
   boo_id?: string;
-  setBoo?: (object: any | Boo) => Promise<void>;
+  setBoo?: (object: any | Boo) => Promise<Boo>;
 
   static _tableName = 'Foo';
 
@@ -156,6 +156,9 @@ describe('ActiveRecord', () => {
     // attributes
     equal(foo.hasOwnProperty('foo'), true);
     equal(foo.hasOwnProperty('goo'), true);
+    equal(foo.foo, 'bar');
+    equal(foo.goo, 1);
+    equal(foo.boo_id, null);
 
     // save
     equal(await foo.save() instanceof Foo, true);
@@ -195,7 +198,7 @@ describe('ActiveRecordRelation', () => {
   it('should create methods and properties', async () => {
     // many to many relation
     equal(foo.bars instanceof Promise, true);
-    // equal(foo.getBars() instanceof Promise, true);
+    equal(foo.getBars() instanceof Promise, true);
     equal(typeof foo.getBars, 'function');
     equal(typeof foo.addBar, 'function');
     equal(typeof foo.addBars, 'function');
@@ -223,31 +226,28 @@ describe('ActiveRecordRelation', () => {
     equal(typeof foo.getFooChildrens, 'function');
     equal(typeof foo.addFooChildren, 'function');
     equal(typeof foo.addFooChildrens, 'function');
+    equal((await foo.fooChildrens).length, 0);
 
     const goo = await new Foo().save();
-    console.log(await foo.addFooChildren({}));
-    /*
-
-
-    fixes wie bei manyToMany machen weil [] returnt wird statt object
-
-    außerdem relationType "isOne" als gegenstück zu "hasMany" hinzufügen
-
-
-    */
     equal(await foo.addFooChildren({}) instanceof FooChild, true);
-    equal(await foo.addFooChildren({}) instanceof FooChild, true);
-    equal(await goo.addFooChildren({}) instanceof FooChild, true);
+    equal((await foo.addFooChildrens([{}]))[0] instanceof FooChild, true);
+    equal((await goo.addFooChildrens([{}]))[0] instanceof FooChild, true);
     equal((await foo.fooChildrens).length, 2);
     equal((await goo.fooChildrens).length, 1);
-    // @todo: add more tests for *has many relations*
-    console.log('@todo: add more tests for *has many relations*');
+    equal((await foo.addFooChildren({})).hasOwnProperty('foo_id'), true);
+    const fooChildrenQuery = await foo.getFooChildrens();
+    equal(fooChildrenQuery instanceof TestQuery, true);
+    equal(fooChildrenQuery.params.where.foo_id, foo.id);
 
     // has one relations
     equal(foo.hasOwnProperty('boo'), true);
     equal(typeof foo.setBoo, 'function');
-    // @todo: add more tests for *has one relations*
-    console.log('@todo: add more tests for *has one relations*');
+
+    const boo = new Boo();
+    equal((await foo.setBoo(boo)) instanceof Boo, true);
+    equal(foo.boo_id, boo.id);
+    equal((await foo.boo) instanceof Boo, true);
+    equal((await foo.boo).id, boo.id);
 
   });
 

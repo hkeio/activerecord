@@ -107,7 +107,8 @@ export class ActiveRecordRelation extends Model {
         object = new this._child(object);
       }
       await object.save();
-      model[this._property] = object[this._child.config.identifier];
+      model[this._property] = object.getAttribute(this._child.config.identifier);
+      return object;
     }
   }
 
@@ -119,14 +120,14 @@ export class ActiveRecordRelation extends Model {
     Object.defineProperty(model, this._label.plural, {
       get: async () => {
         await this._child.init();
-        condition[this._property] = model[this._child.config.identifier];
+        condition[this._property] = model.getAttribute(this._child.config.identifier);
         return await new model.class.config.queryClass(this._child).where(condition).all();
       },
     });
 
     // add `getChild()` method
     model['get' + this._label.capitalizedPlural] = async () => {
-      condition[this._property] = model[this._child.config.identifier];
+      condition[this._property] = model.getAttribute(this._child.config.identifier);
       return await new model.class.config.queryClass(this._child).where(condition);
     };
 
@@ -144,7 +145,7 @@ export class ActiveRecordRelation extends Model {
 
       // set parent model id in children models
       objects = objects.map((object) => {
-        object[this._property] = model[this._child.config.identifier];
+        object[this._property] = model.getAttribute(this._child.config.identifier);
         return object;
       });
 
