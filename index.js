@@ -1,1 +1,826 @@
-!function(t,e){for(var i in e)t[i]=e[i]}(exports,function(t){function e(n){if(i[n])return i[n].exports;var r=i[n]={i:n,l:!1,exports:{}};return t[n].call(r.exports,r,r.exports,e),r.l=!0,r.exports}var i={};return e.m=t,e.c=i,e.d=function(t,i,n){e.o(t,i)||Object.defineProperty(t,i,{configurable:!1,enumerable:!0,get:n})},e.n=function(t){var i=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(i,"a",i),i},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="",e(e.s=2)}([function(t,e,i){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var n=function(){function t(t,e){void 0===e&&(e="string"),this.name=t,this.type=e}return t.prototype.init=function(t){var e=this;if("FooChild"===t.className&&"foo"===this.name)throw console.error("z",t.className,this.name,t.hasOwnProperty(this.name),t[this.name]),new Error("asd");t.hasOwnProperty(this.name)||Object.defineProperty(t,this.name,{get:function(){return t.getAttribute(e.name)},set:function(i){t.setAttribute(e.name,i)}})},t}();e.ModelAttribute=n;var r=function(){function t(t,e){void 0===e&&(e=[]),this._values={},this._class=this.constructor,this._class.addAttributes(e),this._initAttributes(),t&&(this.attributes=t)}return t.addAttributes=function(t){var e=this;t.forEach(function(t){var i=!1,n=null;e._attributes.forEach(function(e,r){t.name===e.name&&(n=r,i=!0)}),i?e._attributes[n]=t:e._attributes.push(t)})},t.hasAttribute=function(t){var e=!1;return this._attributes.forEach(function(i,n){t===i.name&&(e=!0)}),e},t.prototype.hasAttribute=function(t){return this._class.hasAttribute(t)},Object.defineProperty(t.prototype,"class",{get:function(){return this._class},enumerable:!0,configurable:!0}),Object.defineProperty(t,"className",{get:function(){return this.name},enumerable:!0,configurable:!0}),Object.defineProperty(t.prototype,"className",{get:function(){return this._class.name},enumerable:!0,configurable:!0}),t.prototype._initAttributes=function(){var t=this;this._class._attributes.forEach(function(e){return e.init(t)})},t.defineAttributes=function(t){this._attributes=t},t.getAttributeDefinition=function(){return this._attributes},t.prototype.setAttributes=function(t){for(var e=Object.keys(t),i=0,n=e.length;i<n;i++)this._values[e[i]]=t[e[i]]},Object.defineProperty(t.prototype,"attributes",{get:function(){return this._values},set:function(t){this.setAttributes(t)},enumerable:!0,configurable:!0}),t.prototype.setAttribute=function(t,e){this._values[t]=e},t.prototype.getAttribute=function(t){return this._values[t]},t._attributes=[],t}();e.Model=r},function(t,e,i){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var n=function(){function t(t){this._params={fields:[],limit:{start:0,end:void 0},sort:[],where:{}},t.init(),this._db=t.db,this._model=t}return Object.defineProperty(t.prototype,"params",{get:function(){return this._params},enumerable:!0,configurable:!0}),Object.defineProperty(t.prototype,"db",{get:function(){return this._db},enumerable:!0,configurable:!0}),Object.defineProperty(t.prototype,"model",{get:function(){return this._model},enumerable:!0,configurable:!0}),t.prototype.fields=function(t){var e=t;return"string"===t.constructor.name&&(e=[t]),this._params.fields=e,this},t.prototype.sort=function(t){var e=t;return"string"===t.constructor.name&&(e=[t]),this._params.sort=e,this},t.prototype.limit=function(t,e){return void 0===t&&(t=0),void 0===e&&(e=null),this._params.limit.start=t,this._params.limit.end=e,this},t.prototype.where=function(t){return void 0===t&&(t={}),this._params.where=t,this},t}();e.ActiveQuery=n},function(t,e,i){"use strict";function n(t){for(var i in t)e.hasOwnProperty(i)||(e[i]=t[i])}Object.defineProperty(e,"__esModule",{value:!0}),n(i(1)),n(i(3)),n(i(4)),n(i(0))},function(t,e,i){"use strict";var n=this&&this.__extends||function(){var t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var i in e)e.hasOwnProperty(i)&&(t[i]=e[i])};return function(e,i){function n(){this.constructor=e}t(e,i),e.prototype=null===i?Object.create(i):(n.prototype=i.prototype,new n)}}(),r=this&&this.__awaiter||function(t,e,i,n){return new(i||(i=Promise))(function(r,o){function s(t){try{u(n.next(t))}catch(t){o(t)}}function a(t){try{u(n.throw(t))}catch(t){o(t)}}function u(t){t.done?r(t.value):new i(function(e){e(t.value)}).then(s,a)}u((n=n.apply(t,e||[])).next())})},o=this&&this.__generator||function(t,e){function i(i){return function(s){return function(i){if(n)throw new TypeError("Generator is already executing.");for(;a;)try{if(n=1,r&&(o=r[2&i[0]?"return":i[0]?"throw":"next"])&&!(o=o.call(r,i[1])).done)return o;switch(r=0,o&&(i=[0,o.value]),i[0]){case 0:case 1:o=i;break;case 4:return a.label++,{value:i[1],done:!1};case 5:a.label++,r=i[1],i=[0];continue;case 7:i=a.ops.pop(),a.trys.pop();continue;default:if(o=a.trys,!(o=o.length>0&&o[o.length-1])&&(6===i[0]||2===i[0])){a=0;continue}if(3===i[0]&&(!o||i[1]>o[0]&&i[1]<o[3])){a.label=i[1];break}if(6===i[0]&&a.label<o[1]){a.label=o[1],o=i;break}if(o&&a.label<o[2]){a.label=o[2],a.ops.push(i);break}o[2]&&a.ops.pop(),a.trys.pop();continue}i=e.call(t,a)}catch(t){i=[6,t],r=0}finally{n=o=0}if(5&i[0])throw i[1];return{value:i[0]?i[1]:void 0,done:!0}}([i,s])}}var n,r,o,s,a={label:0,sent:function(){if(1&o[0])throw o[1];return o[1]},trys:[],ops:[]};return s={next:i(0),throw:i(1),return:i(2)},"function"==typeof Symbol&&(s[Symbol.iterator]=function(){return this}),s};Object.defineProperty(e,"__esModule",{value:!0});var s=i(1),a=function(t){function e(e){var i=t.call(this,e)||this;return i._class.init(),i._initRelations(),i}return n(e,t),Object.defineProperty(e,"db",{get:function(){return this._db[this.config.tableName]},enumerable:!0,configurable:!0}),Object.defineProperty(e.prototype,"db",{get:function(){return this._class.db[this._class.config.tableName]},enumerable:!0,configurable:!0}),e._dbInit=function(){return this.initialized(this.config.tableName),Promise.resolve(!0)},e.initialized=function(t){this._initialized[t]=!0},Object.defineProperty(e,"config",{get:function(){return this._config[this._tableName]},set:function(t){var e=this;Object.keys(t).forEach(function(i){e._config[i]=t[i]})},enumerable:!0,configurable:!0}),e.init=function(){return r(this,void 0,void 0,function(){return o(this,function(t){return this._initialized[this._tableName]?[2]:(this._config[this._tableName]={identifier:this._identifier||this._defaultConfig.identifier,tableName:this._tableName||this._defaultConfig.tableName,queryClass:this._queryClass||this._defaultConfig.queryClass},[2,this._dbInit()])})})},e.prototype._initRelations=function(){var t=this;this._class._relations.forEach(function(e){return e.init(t)})},e.addRelation=function(t){this._relations.push(t)},Object.defineProperty(e.prototype,"id",{get:function(){return this.getAttribute(this._class.config.identifier)},set:function(t){this.id||this.setAttribute(this._class.config.identifier,t)},enumerable:!0,configurable:!0}),Object.defineProperty(e.prototype,"isNewRecord",{get:function(){return!this.id},enumerable:!0,configurable:!0}),e.find=function(){return this.init(),new this.config.queryClass(this)},e.findOne=function(t){if(void 0===t&&(t={}),this.init(),"string"==typeof t){var e={};return e[this.config.identifier]=t,this.find().where(e).one()}return this.find().where(t).one()},e.findAll=function(t){return void 0===t&&(t={}),this.find().where(t).all()},e.save=function(t){return r(this,void 0,void 0,function(){return o(this,function(t){throw new Error("Model.save() needs to be set!")})})},e._relations=[],e._defaultConfig={identifier:"id",tableName:"ActiveRecord",queryClass:s.ActiveQuery},e._config={},e._db={},e._initialized={},e}(i(0).Model);e.ActiveRecord=a},function(t,e,i){"use strict";var n=this&&this.__awaiter||function(t,e,i,n){return new(i||(i=Promise))(function(r,o){function s(t){try{u(n.next(t))}catch(t){o(t)}}function a(t){try{u(n.throw(t))}catch(t){o(t)}}function u(t){t.done?r(t.value):new i(function(e){e(t.value)}).then(s,a)}u((n=n.apply(t,e||[])).next())})},r=this&&this.__generator||function(t,e){function i(i){return function(s){return function(i){if(n)throw new TypeError("Generator is already executing.");for(;a;)try{if(n=1,r&&(o=r[2&i[0]?"return":i[0]?"throw":"next"])&&!(o=o.call(r,i[1])).done)return o;switch(r=0,o&&(i=[0,o.value]),i[0]){case 0:case 1:o=i;break;case 4:return a.label++,{value:i[1],done:!1};case 5:a.label++,r=i[1],i=[0];continue;case 7:i=a.ops.pop(),a.trys.pop();continue;default:if(o=a.trys,!(o=o.length>0&&o[o.length-1])&&(6===i[0]||2===i[0])){a=0;continue}if(3===i[0]&&(!o||i[1]>o[0]&&i[1]<o[3])){a.label=i[1];break}if(6===i[0]&&a.label<o[1]){a.label=o[1],o=i;break}if(o&&a.label<o[2]){a.label=o[2],a.ops.push(i);break}o[2]&&a.ops.pop(),a.trys.pop();continue}i=e.call(t,a)}catch(t){i=[6,t],r=0}finally{n=o=0}if(5&i[0])throw i[1];return{value:i[0]?i[1]:void 0,done:!0}}([i,s])}}var n,r,o,s,a={label:0,sent:function(){if(1&o[0])throw o[1];return o[1]},trys:[],ops:[]};return s={next:i(0),throw:i(1),return:i(2)},"function"==typeof Symbol&&(s[Symbol.iterator]=function(){return this}),s};Object.defineProperty(e,"__esModule",{value:!0});var o=i(0),s=1,a=2,u=3,c=function(){function t(t,e){this._child=t._child,this._foreignKey=t._foreignKey,this._intermediate=t._intermediate,this._key=t._key,this._label=this._formatLabel(t._label),this._property=t._property,this._type=t._type}return t.prototype._formatLabel=function(t){var e="s"===t[t.length-1]?t.substr(0,t.length-1):t,i="s"===t[t.length-1]?t:t+"s";return{original:t,singular:e,plural:i,capitalizedSingular:e[0].toUpperCase()+e.slice(1),capitalizedPlural:i[0].toUpperCase()+i.slice(1)}},t.hasOne=function(t,e,i){return new this({_child:e,_label:t,_property:i,_type:s})},t.hasMany=function(t,e,i){return new this({_child:e,_label:t,_property:i,_type:a})},t.manyToMany=function(t,e,i,n,r){return new this({_child:e,_foreignKey:r,_intermediate:i,_key:n,_label:t,_type:u})},t.prototype.init=function(t){var e={};this._type===s?this._initHasOne(t,e):this._type===a?this._initHasMany(t,e):this._type===u&&this._initManyToMany(t,e)},t.prototype._initHasOne=function(t,e){var i=this,s=new o.ModelAttribute(this._property,"string");t.class.addAttributes([s]),s.init(t),t.setAttribute(this._property,t.getAttribute(this._property)||null),t.hasOwnProperty(this._label.original)||Object.defineProperty(t,this._label.original,{get:function(){return i._child.findOne(t.getAttribute(i._property))}}),t.hasOwnProperty(this._property)||Object.defineProperty(t,this._property,{get:function(){return t.getAttribute(i._property)}}),t["set"+this._label.capitalizedSingular]=function(e){return n(i,void 0,void 0,function(){return r(this,function(i){switch(i.label){case 0:return e instanceof this._child||(e=new this._child(e)),[4,e.save()];case 1:return i.sent(),t.setAttribute(this._property,e.getAttribute(this._child.config.identifier)),[2,e]}})})}},t.prototype._initHasMany=function(t,e){var i=this,s=new o.ModelAttribute(this._property,"foreignKey");this._child.addAttributes([s]),s.init(t),Object.defineProperty(t,this._label.plural,{get:function(){return n(i,void 0,void 0,function(){return r(this,function(i){switch(i.label){case 0:return[4,this._child.init()];case 1:return i.sent(),e[this._property]=t.getAttribute(this._child.config.identifier),[4,new t.class.config.queryClass(this._child).where(e).all()];case 2:return[2,i.sent()]}})})}}),t["get"+this._label.capitalizedPlural]=function(){return n(i,void 0,void 0,function(){return r(this,function(i){switch(i.label){case 0:return e[this._property]=t.getAttribute(this._child.config.identifier),[4,new t.class.config.queryClass(this._child).where(e)];case 1:return[2,i.sent()]}})})},t["add"+this._label.capitalizedSingular]=function(e){return n(i,void 0,void 0,function(){var i;return r(this,function(n){switch(n.label){case 0:return[4,t["add"+this._label.capitalizedPlural]([e])];case 1:return i=n.sent(),[2,i[0]]}})})},t["add"+this._label.capitalizedPlural]=function(e){return n(i,void 0,void 0,function(){var i=this;return r(this,function(n){switch(n.label){case 0:return e.length?(e=e.map(function(e){return e[i._property]=t.getAttribute(i._child.config.identifier),e}),[4,this._child.save(e)]):[2];case 1:return[2,n.sent()]}})})}},t.prototype._initManyToMany=function(t,e){var i=this,s=new o.ModelAttribute(this._foreignKey,"foreignKey");this._intermediate.addAttributes([s]),s.init(t),t.hasOwnProperty(this._label.plural)||Object.defineProperty(t,this._label.plural,{get:function(){return n(i,void 0,void 0,function(){var i,n,o,s=this;return r(this,function(r){switch(r.label){case 0:return[4,this._child.init()];case 1:return r.sent(),e[this._key]=t.getAttribute(t.class.config.identifier),[4,this._intermediate.find().where(e).fields([this._foreignKey]).all(!1)];case 2:return(i=r.sent()).length?(n=i.map(function(t){return t.getAttribute(s._foreignKey)}).filter(Boolean),o={},o[this._child.config.identifier]={$in:n},[4,new t.class.config.queryClass(this._child).where(o).all()]):[2,[]];case 3:return[2,r.sent()]}})})}}),t["get"+this._label.capitalizedPlural]=function(){return n(i,void 0,void 0,function(){var i,n,o,s=this;return r(this,function(r){switch(r.label){case 0:return e[this._key]=t.getAttribute(this._child.config.identifier),[4,this._intermediate.find().where(e).fields([this._foreignKey]).all(!1)];case 1:return(i=r.sent()).length?(n=i.map(function(t){return t.getAttribute(s._foreignKey)}).filter(Boolean),o={},o[this._child.config.identifier]={$in:n},[4,new t.class.config.queryClass(this._child).where(o)]):[2,[]];case 2:return[2,r.sent()]}})})},t["add"+this._label.capitalizedSingular]=function(e){return n(i,void 0,void 0,function(){var i;return r(this,function(n){switch(n.label){case 0:return[4,t["add"+this._label.capitalizedPlural]([e])];case 1:return i=n.sent(),[2,i[0]]}})})},t["add"+this._label.capitalizedPlural]=function(e){return n(i,void 0,void 0,function(){var i,n,o,s,a,u,c,l,f,h=this;return r(this,function(d){switch(d.label){case 0:return e.length?[4,this._child.save(e)]:[2];case 1:return i=d.sent(),n={},n[this._foreignKey]={$in:i.map(function(t){return t.getAttribute(h._child.config.identifier)})},[4,this._intermediate.findAll(n)];case 2:o=d.sent(),s=function(e){var i,n;return r(this,function(r){switch(r.label){case 0:return u=!1,o.length&&o.forEach(function(t){u=u||e.getAttribute(h._child.config.identifier)===t.getAttribute(h._foreignKey)}),u?[3,2]:(i={},i[a._key]=t.getAttribute(a._child.config.identifier),i[a._foreignKey]=e.getAttribute(a._child.config.identifier),n=new a._intermediate(i),[4,n.save()]);case 1:r.sent(),r.label=2;case 2:return[2]}})},a=this,c=0,l=i,d.label=3;case 3:return c<l.length?(f=l[c],[5,s(f)]):[3,6];case 4:d.sent(),d.label=5;case 5:return c++,[3,3];case 6:return[2,i]}})})}},t}();e.ActiveRecordRelation=c}]));
+(function(e, a) { for(var i in a) e[i] = a[i]; }(exports, /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ModelAttribute = /** @class */ (function () {
+    function ModelAttribute(name, type) {
+        if (type === void 0) { type = 'string'; }
+        this.name = name;
+        this.type = type;
+    }
+    ModelAttribute.prototype.init = function (model) {
+        var _this = this;
+        if (model.className === 'FooChild' && this.name === 'foo') {
+            console.error('z', model.className, this.name, model.hasOwnProperty(this.name), model[this.name]);
+            throw new Error('asd');
+        }
+        if (!model.hasOwnProperty(this.name)) {
+            Object.defineProperty(model, this.name, {
+                get: function () { return model.getAttribute(_this.name); },
+                set: function (value) {
+                    model.setAttribute(_this.name, value);
+                },
+            });
+        }
+    };
+    return ModelAttribute;
+}());
+exports.ModelAttribute = ModelAttribute;
+var Model = /** @class */ (function () {
+    function Model(values, attributes) {
+        if (attributes === void 0) { attributes = []; }
+        this._values = {};
+        this._class = this.constructor; //@todo: can be removed ?!
+        this._class.addAttributes(attributes);
+        this._initAttributes();
+        if (values) {
+            this.attributes = values;
+        }
+    }
+    Model.addAttributes = function (attributes) {
+        var _this = this;
+        attributes.forEach(function (attribute) {
+            var found = false, index = null;
+            _this._attributes.forEach(function (attr, i) {
+                if (attribute.name === attr.name) {
+                    index = i;
+                    found = true;
+                }
+            });
+            if (found) {
+                _this._attributes[index] = attribute;
+            }
+            else {
+                _this._attributes.push(attribute);
+            }
+        });
+    };
+    Model.hasAttribute = function (attribute) {
+        var found = false;
+        this._attributes.forEach(function (attr, i) {
+            if (attribute === attr.name) {
+                found = true;
+            }
+        });
+        return found;
+    };
+    Model.prototype.hasAttribute = function (attribute) {
+        return this._class.hasAttribute(attribute);
+    };
+    Object.defineProperty(Model.prototype, "class", {
+        get: function () {
+            return this._class;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Model, "className", {
+        get: function () {
+            return this.name;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Model.prototype, "className", {
+        get: function () {
+            return this._class.name;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Model.prototype._initAttributes = function () {
+        var _this = this;
+        this._class._attributes.forEach(function (attribute) { return attribute.init(_this); });
+    };
+    Model.defineAttributes = function (attributes) {
+        this._attributes = attributes;
+    };
+    Model.getAttributeDefinition = function () {
+        return this._attributes;
+    };
+    Model.prototype.setAttributes = function (values) {
+        var keys = Object.keys(values);
+        for (var i = 0, l = keys.length; i < l; i++) {
+            this._values[keys[i]] = values[keys[i]];
+        }
+    };
+    Object.defineProperty(Model.prototype, "attributes", {
+        get: function () {
+            return this._values;
+        },
+        set: function (values) {
+            this.setAttributes(values);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Model.prototype.setAttribute = function (attribute, value) {
+        this._values[attribute] = value;
+    };
+    Model.prototype.getAttribute = function (attribute) {
+        return this._values[attribute];
+    };
+    Model._attributes = [];
+    return Model;
+}());
+exports.Model = Model;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ActiveQuery = /** @class */ (function () {
+    function ActiveQuery(model) {
+        this._params = {
+            fields: [],
+            limit: {
+                start: 0,
+                end: undefined
+            },
+            sort: [],
+            where: {},
+        };
+        model.init();
+        this._db = model.db;
+        this._model = model;
+    }
+    Object.defineProperty(ActiveQuery.prototype, "params", {
+        get: function () {
+            return this._params;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActiveQuery.prototype, "db", {
+        get: function () {
+            return this._db;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActiveQuery.prototype, "model", {
+        get: function () {
+            return this._model;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ActiveQuery.prototype.fields = function (param) {
+        var fields = param;
+        if (param.constructor.name === 'string') {
+            fields = [param];
+        }
+        this._params.fields = fields;
+        return this;
+    };
+    ActiveQuery.prototype.sort = function (param) {
+        var sort = param;
+        if (param.constructor.name === 'string') {
+            sort = [param];
+        }
+        this._params.sort = sort;
+        return this;
+    };
+    ActiveQuery.prototype.limit = function (start, end) {
+        if (start === void 0) { start = 0; }
+        if (end === void 0) { end = null; }
+        this._params.limit.start = start;
+        this._params.limit.end = end;
+        return this;
+    };
+    ActiveQuery.prototype.where = function (condition) {
+        if (condition === void 0) { condition = {}; }
+        this._params.where = condition;
+        return this;
+    };
+    return ActiveQuery;
+}());
+exports.ActiveQuery = ActiveQuery;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(1));
+__export(__webpack_require__(3));
+__export(__webpack_require__(4));
+__export(__webpack_require__(0));
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var ActiveQuery_1 = __webpack_require__(1);
+var Model_1 = __webpack_require__(0);
+;
+var ActiveRecord = /** @class */ (function (_super) {
+    __extends(ActiveRecord, _super);
+    function ActiveRecord(values) {
+        var _this = _super.call(this, values) || this;
+        _this._class.init();
+        _this._initRelations();
+        return _this;
+    }
+    Object.defineProperty(ActiveRecord, "db", {
+        get: function () {
+            return this._db[this.config.tableName];
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActiveRecord.prototype, "db", {
+        get: function () {
+            return this._class.db[this._class.config.tableName];
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ActiveRecord._dbInit = function () {
+        this.initialized(this.config.tableName);
+        return Promise.resolve(true);
+    };
+    ActiveRecord.initialized = function (model) {
+        this._initialized[model] = true;
+    };
+    Object.defineProperty(ActiveRecord, "config", {
+        get: function () {
+            return this._config[this._tableName];
+        },
+        set: function (config) {
+            var _this = this;
+            Object.keys(config).forEach(function (key) {
+                _this._config[key] = config[key];
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ActiveRecord.init = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (this._initialized[this._tableName]) {
+                    return [2 /*return*/];
+                }
+                this._config[this._tableName] = {
+                    identifier: this._identifier || this._defaultConfig.identifier,
+                    tableName: this._tableName || this._defaultConfig.tableName,
+                    queryClass: this._queryClass || this._defaultConfig.queryClass
+                };
+                return [2 /*return*/, this._dbInit()];
+            });
+        });
+    };
+    ActiveRecord.prototype._initRelations = function () {
+        var _this = this;
+        this._class._relations.forEach(function (relation) { return relation.init(_this); });
+    };
+    ActiveRecord.addRelation = function (relation) {
+        this._relations.push(relation);
+    };
+    Object.defineProperty(ActiveRecord.prototype, "id", {
+        /* Easy access getter */
+        get: function () {
+            return this.getAttribute(this._class.config.identifier);
+        },
+        set: function (value) {
+            if (!this.id) {
+                this.setAttribute(this._class.config.identifier, value);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActiveRecord.prototype, "isNewRecord", {
+        get: function () {
+            return !this.id;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /* Querying methods */
+    ActiveRecord.find = function () {
+        this.init();
+        return new this.config.queryClass(this);
+    };
+    ActiveRecord.findOne = function (condition) {
+        if (condition === void 0) { condition = {}; }
+        this.init();
+        // condition is id
+        if (typeof condition === 'string') {
+            var idCondition = {};
+            idCondition[this.config.identifier] = condition;
+            return this.find()
+                .where(idCondition)
+                .one();
+        }
+        return this.find()
+            .where(condition)
+            .one();
+    };
+    ActiveRecord.findAll = function (condition) {
+        if (condition === void 0) { condition = {}; }
+        return this.find()
+            .where(condition)
+            .all();
+    };
+    ActiveRecord.save = function (objects) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                throw new Error('Model.save() needs to be set!');
+            });
+        });
+    };
+    ;
+    ActiveRecord._relations = [];
+    ActiveRecord._defaultConfig = {
+        identifier: 'id',
+        tableName: 'ActiveRecord',
+        queryClass: ActiveQuery_1.ActiveQuery
+    };
+    ActiveRecord._config = {};
+    ActiveRecord._db = {};
+    ActiveRecord._initialized = {};
+    return ActiveRecord;
+}(Model_1.Model));
+exports.ActiveRecord = ActiveRecord;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var Model_1 = __webpack_require__(0);
+var ActiveRecordRelationType = {
+    HasOne: 1,
+    HasMany: 2,
+    ManyToMany: 3
+};
+var ActiveRecordRelation = /** @class */ (function () {
+    function ActiveRecordRelation(values, attributes) {
+        this._child = values._child;
+        this._foreignKey = values._foreignKey;
+        this._intermediate = values._intermediate;
+        this._key = values._key;
+        this._label = this._formatLabel(values._label);
+        this._property = values._property;
+        this._type = values._type;
+    }
+    ActiveRecordRelation.prototype._formatLabel = function (string) {
+        var singular = string[string.length - 1] === 's' ? string.substr(0, string.length - 1) : string;
+        var plural = string[string.length - 1] === 's' ? string : string + 's';
+        return {
+            original: string,
+            singular: singular,
+            plural: plural,
+            capitalizedSingular: singular[0].toUpperCase() + singular.slice(1),
+            capitalizedPlural: plural[0].toUpperCase() + plural.slice(1)
+        };
+    };
+    ActiveRecordRelation.hasOne = function (label, child, property) {
+        return new this({
+            _child: child,
+            _label: label,
+            _property: property,
+            _type: ActiveRecordRelationType.HasOne
+        });
+    };
+    ActiveRecordRelation.hasMany = function (label, child, property) {
+        return new this({
+            _child: child,
+            _label: label,
+            _property: property,
+            _type: ActiveRecordRelationType.HasMany
+        });
+    };
+    ActiveRecordRelation.manyToMany = function (label, child, intermediate, key, foreignKey) {
+        return new this({
+            _child: child,
+            _foreignKey: foreignKey,
+            _intermediate: intermediate,
+            _key: key,
+            _label: label,
+            _type: ActiveRecordRelationType.ManyToMany
+        });
+    };
+    ActiveRecordRelation.prototype.init = function (model) {
+        var condition = {};
+        if (this._type === ActiveRecordRelationType.HasOne) {
+            this._initHasOne(model, condition);
+        }
+        else if (this._type === ActiveRecordRelationType.HasMany) {
+            this._initHasMany(model, condition);
+        }
+        else if (this._type === ActiveRecordRelationType.ManyToMany) {
+            this._initManyToMany(model, condition);
+        }
+    };
+    ActiveRecordRelation.prototype._initHasOne = function (model, condition) {
+        var _this = this;
+        // add property to class
+        var attribute = new Model_1.ModelAttribute(this._property, 'string');
+        model.class.addAttributes([attribute]);
+        attribute.init(model);
+        model.setAttribute(this._property, model.getAttribute(this._property) || null);
+        if (!model.hasOwnProperty(this._label.original)) {
+            Object.defineProperty(model, this._label.original, {
+                get: function () { return _this._child.findOne(model.getAttribute(_this._property)); },
+            });
+        }
+        if (!model.hasOwnProperty(this._property)) {
+            Object.defineProperty(model, this._property, {
+                get: function () { return model.getAttribute(_this._property); },
+            });
+        }
+        // add `setChild()` method
+        model['set' + this._label.capitalizedSingular] = function (object) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(object instanceof this._child)) {
+                            object = new this._child(object);
+                        }
+                        return [4 /*yield*/, object.save()];
+                    case 1:
+                        _a.sent();
+                        model.setAttribute(this._property, object.getAttribute(this._child.config.identifier));
+                        return [2 /*return*/, object];
+                }
+            });
+        }); };
+    };
+    ActiveRecordRelation.prototype._initHasMany = function (model, condition) {
+        var _this = this;
+        // add foreign property to child class
+        var attribute = new Model_1.ModelAttribute(this._property, 'foreignKey');
+        this._child.addAttributes([attribute]);
+        attribute.init(model);
+        // set getter `children` property
+        Object.defineProperty(model, this._label.plural, {
+            get: function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this._child.init()];
+                        case 1:
+                            _a.sent();
+                            condition[this._property] = model.getAttribute(this._child.config.identifier);
+                            return [4 /*yield*/, new model.class.config.queryClass(this._child).where(condition).all()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); },
+        });
+        // add `getChild()` method
+        model['get' + this._label.capitalizedPlural] = function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        condition[this._property] = model.getAttribute(this._child.config.identifier);
+                        return [4 /*yield*/, new model.class.config.queryClass(this._child).where(condition)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+        // add `addChild()` method
+        model['add' + this._label.capitalizedSingular] = function (object) { return __awaiter(_this, void 0, void 0, function () {
+            var res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, model['add' + this._label.capitalizedPlural]([object])];
+                    case 1:
+                        res = _a.sent();
+                        return [2 /*return*/, res[0]];
+                }
+            });
+        }); };
+        // add `addChildren()` method
+        model['add' + this._label.capitalizedPlural] = function (objects) { return __awaiter(_this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!objects.length) {
+                            return [2 /*return*/];
+                        }
+                        // set parent model id in children models
+                        objects = objects.map(function (object) {
+                            object[_this._property] = model.getAttribute(_this._child.config.identifier);
+                            return object;
+                        });
+                        return [4 /*yield*/, this._child.save(objects)];
+                    case 1: 
+                    // save all objects
+                    return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+    };
+    ActiveRecordRelation.prototype._initManyToMany = function (model, condition) {
+        var _this = this;
+        // add foreign property to intermediate class
+        var attribute = new Model_1.ModelAttribute(this._foreignKey, 'foreignKey');
+        this._intermediate.addAttributes([attribute]);
+        attribute.init(model);
+        // set getter `children` property
+        if (!model.hasOwnProperty(this._label.plural)) {
+            Object.defineProperty(model, this._label.plural, {
+                get: function () { return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    var res, ids, queryCondition;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, this._child.init()];
+                            case 1:
+                                _a.sent();
+                                condition[this._key] = model.getAttribute(model.class.config.identifier);
+                                return [4 /*yield*/, this._intermediate.find()
+                                        .where(condition)
+                                        .fields([this._foreignKey])
+                                        .all(false)];
+                            case 2:
+                                res = _a.sent();
+                                if (!res.length) {
+                                    return [2 /*return*/, []];
+                                }
+                                ids = res.map(function (doc) { return doc.getAttribute(_this._foreignKey); }).filter(Boolean);
+                                queryCondition = {};
+                                queryCondition[this._child.config.identifier] = { $in: ids };
+                                return [4 /*yield*/, new model.class.config.queryClass(this._child)
+                                        .where(queryCondition)
+                                        .all()];
+                            case 3: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                }); }
+            });
+        }
+        // add `getChild()` method
+        model['get' + this._label.capitalizedPlural] = function () { return __awaiter(_this, void 0, void 0, function () {
+            var _this = this;
+            var res, ids, queryCondition;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        condition[this._key] = model.getAttribute(this._child.config.identifier);
+                        return [4 /*yield*/, this._intermediate.find()
+                                .where(condition)
+                                .fields([this._foreignKey])
+                                .all(false)];
+                    case 1:
+                        res = _a.sent();
+                        if (!res.length) {
+                            return [2 /*return*/, []];
+                        }
+                        ids = res.map(function (doc) { return doc.getAttribute(_this._foreignKey); }).filter(Boolean);
+                        queryCondition = {};
+                        queryCondition[this._child.config.identifier] = { $in: ids };
+                        return [4 /*yield*/, new model.class.config.queryClass(this._child)
+                                .where(queryCondition)];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+        // add `addChild()` method
+        model['add' + this._label.capitalizedSingular] = function (object) { return __awaiter(_this, void 0, void 0, function () {
+            var res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, model['add' + this._label.capitalizedPlural]([object])];
+                    case 1:
+                        res = _a.sent();
+                        return [2 /*return*/, res[0]];
+                }
+            });
+        }); };
+        // add `addChildren()` method
+        model['add' + this._label.capitalizedPlural] = function (objects) { return __awaiter(_this, void 0, void 0, function () {
+            var _this = this;
+            var savedObjects, condition, existingRelations, _loop_1, this_1, found, _i, savedObjects_1, object;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!objects.length) {
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, this._child.save(objects)];
+                    case 1:
+                        savedObjects = _a.sent();
+                        condition = {};
+                        condition[this._foreignKey] = { $in: savedObjects.map(function (object) { return object.getAttribute(_this._child.config.identifier); }) };
+                        return [4 /*yield*/, this._intermediate.findAll(condition)];
+                    case 2:
+                        existingRelations = _a.sent();
+                        _loop_1 = function (object) {
+                            var data, relation;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        found = false;
+                                        if (existingRelations.length) {
+                                            existingRelations.forEach(function (existing) {
+                                                found = found || object.getAttribute(_this._child.config.identifier) === existing.getAttribute(_this._foreignKey);
+                                            });
+                                        }
+                                        if (!!found) return [3 /*break*/, 2];
+                                        data = {};
+                                        data[this_1._key] = model.getAttribute(this_1._child.config.identifier);
+                                        data[this_1._foreignKey] = object.getAttribute(this_1._child.config.identifier);
+                                        relation = new this_1._intermediate(data);
+                                        return [4 /*yield*/, relation.save()];
+                                    case 1:
+                                        _a.sent();
+                                        _a.label = 2;
+                                    case 2: return [2 /*return*/];
+                                }
+                            });
+                        };
+                        this_1 = this;
+                        _i = 0, savedObjects_1 = savedObjects;
+                        _a.label = 3;
+                    case 3:
+                        if (!(_i < savedObjects_1.length)) return [3 /*break*/, 6];
+                        object = savedObjects_1[_i];
+                        return [5 /*yield**/, _loop_1(object)];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 3];
+                    case 6: return [2 /*return*/, savedObjects];
+                }
+            });
+        }); };
+    };
+    return ActiveRecordRelation;
+}());
+exports.ActiveRecordRelation = ActiveRecordRelation;
+
+
+/***/ })
+/******/ ])));

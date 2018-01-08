@@ -7,5 +7,4 @@ Thumbs.db
 .DS_Store
 
 # Ignored files
-dist
-cc-test-reporter
+types
