@@ -23,5 +23,5 @@ module.exports = {
       loader: 'ts-loader'
     }]
   },
-  devtool: "cheap-eval-source-map"
+  devtool: "inline-source-map"
 };
