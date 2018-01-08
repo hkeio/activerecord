@@ -223,6 +223,23 @@ describe('ActiveRecordRelation', () => {
     equal(typeof foo.getFooChildrens, 'function');
     equal(typeof foo.addFooChildren, 'function');
     equal(typeof foo.addFooChildrens, 'function');
+
+    const goo = await new Foo().save();
+    console.log(await foo.addFooChildren({}));
+    /*
+
+
+    fixes wie bei manyToMany machen weil [] returnt wird statt object
+
+    außerdem relationType "isOne" als gegenstück zu "hasMany" hinzufügen
+
+
+    */
+    equal(await foo.addFooChildren({}) instanceof FooChild, true);
+    equal(await foo.addFooChildren({}) instanceof FooChild, true);
+    equal(await goo.addFooChildren({}) instanceof FooChild, true);
+    equal((await foo.fooChildrens).length, 2);
+    equal((await goo.fooChildrens).length, 1);
     // @todo: add more tests for *has many relations*
     console.log('@todo: add more tests for *has many relations*');
 

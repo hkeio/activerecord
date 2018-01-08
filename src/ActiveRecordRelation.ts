@@ -132,7 +132,8 @@ export class ActiveRecordRelation extends Model {
 
     // add `addChild()` method
     model['add' + this._label.capitalizedSingular] = async (object: any) => {
-      return model['add' + this._label.capitalizedPlural]([object]);
+      const res = await model['add' + this._label.capitalizedPlural]([object]);
+      return res[0];
     }
 
     // add `addChildren()` method
