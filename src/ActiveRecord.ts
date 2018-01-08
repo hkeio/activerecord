@@ -77,11 +77,11 @@ export abstract class ActiveRecord extends Model {
     this._class._relations.forEach((relation) => relation.init(this));
   }
 
-  /* Easy access getter */
-
-  get class() {
-    return this._class;
+  public static addRelation(relation: ActiveRecordRelation) {
+    this._relations.push(relation);
   }
+
+  /* Easy access getter */
 
   get id(): string | number {
     return this.getAttribute(this._class.config.identifier);

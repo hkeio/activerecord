@@ -8,12 +8,18 @@ export class ModelAttribute {
   }
 
   init(model: Model) {
-    Object.defineProperty(model, this.name, {
-      get: () => model.getAttribute(this.name),
-      set: (value: any) => {
-        model.setAttribute(this.name, value);
-      },
-    });
+    if (model.className === 'FooChild' && this.name === 'foo') {
+      console.error('z', model.className, this.name, model.hasOwnProperty(this.name), model[this.name]);
+      throw new Error('asd');
+    }
+    if (!model.hasOwnProperty(this.name)) {
+      Object.defineProperty(model, this.name, {
+        get: () => model.getAttribute(this.name),
+        set: (value: any) => {
+          model.setAttribute(this.name, value);
+        },
+      });
+    }
   }
 }
 
@@ -51,6 +57,24 @@ export class Model {
     });
   }
 
+  public static hasAttribute(attribute: string) {
+    let found = false;
+    this._attributes.forEach((attr: ModelAttribute, i) => {
+      if (attribute === attr.name) {
+        found = true;
+      }
+    });
+    return found;
+  }
+
+  public hasAttribute(attribute: string) {
+    return this._class.hasAttribute(attribute);
+  }
+
+  get class() {
+    return this._class;
+  }
+
   public static get className(): string {
     return this.name;
   }
@@ -65,6 +89,10 @@ export class Model {
 
   public static defineAttributes(attributes: ModelAttribute[]) {
     this._attributes = attributes;
+  }
+
+  public static getAttributeDefinition(): ModelAttribute[] {
+    return this._attributes;
   }
 
   public setAttributes(values): void {
