@@ -181,7 +181,7 @@ export class ActiveRecordRelation {
             return [];
           }
 
-          let ids = res.map((doc) => doc.getAttribute(this._foreignKey)).filter(Boolean);
+          let ids = res.map((doc) => doc[this._foreignKey]).filter(Boolean);
           let queryCondition = {};
           queryCondition[this._child.config.identifier] = { $in: ids };
           return await new model.class.config.queryClass(this._child)
@@ -202,7 +202,7 @@ export class ActiveRecordRelation {
         return [];
       }
 
-      let ids = res.map((doc) => doc.getAttribute(this._foreignKey)).filter(Boolean);
+      let ids = res.map((doc) => doc[this._foreignKey]).filter(Boolean);
       let queryCondition = {};
       queryCondition[this._child.config.identifier] = { $in: ids };
       return await new model.class.config.queryClass(this._child)
