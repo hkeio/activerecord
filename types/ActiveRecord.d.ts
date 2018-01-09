@@ -25,7 +25,7 @@ export declare abstract class ActiveRecord extends Model {
     static config: ActiveRecordConfig;
     static init(): Promise<boolean>;
     private _initRelations();
-    readonly class: any;
+    static addRelation(relation: ActiveRecordRelation): void;
     id: string | number;
     readonly isNewRecord: boolean;
     static find(): ActiveQuery & any;

@@ -1,14 +1,31 @@
 {
   "name": "@hke/activerecord",
-  "version": "1.0.4",
+  "version": "1.1.10",
   "description": "Typescript ORM-style base models",
   "main": "index.js",
   "types": "./types/index.d.ts",
   "scripts": {
     "build": "webpack",
-    "preversion": "npm test && npm run build && git add -A && git commit -m \"pre publish commit\"",
+    "preversion": "npm test",
     "postversion": "git push && npm publish",
-    "test": "mocha -r ts-node/register test/*.spec.ts"
+    "test": "nyc mocha && npm run build"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "repository": {
     "type": "git",
@@ -21,14 +38,16 @@
   },
   "homepage": "https://github.com/hkeio/activerecord#readme",
   "devDependencies": {
-    "@types/mocha": "^2.2.44",
-    "@types/node": "^8.5.2",
+    "@types/mocha": "^2.2.46",
+    "@types/node": "^8.5.8",
     "app-root-path": "^2.0.1",
     "mocha": "^3.4.2",
+    "nyc": "^11.4.1",
+    "source-map-support": "^0.5.0",
     "ts-loader": "^3.2.0",
     "ts-node": "^3.3.0",
     "typescript": "^2.6.2",
-    "uglifyjs-webpack-plugin": "^1.1.5",
+    "uglifyjs-webpack-plugin": "^1.1.6",
     "uuid": "^3.1.0",
     "webpack": "^3.10.0"
   }

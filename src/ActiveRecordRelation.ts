@@ -15,7 +15,7 @@ interface Label {
   capitalizedPlural: string;
 }
 
-export class ActiveRecordRelation extends Model {
+export class ActiveRecordRelation {
 
   private _child: typeof ActiveRecord & any;
   private _foreignKey: string;
@@ -25,19 +25,14 @@ export class ActiveRecordRelation extends Model {
   private _property: string;
   private _type: number;
 
-  protected static _attributes: ModelAttribute[] = [
-    new ModelAttribute('_child', typeof ActiveRecord),
-    new ModelAttribute('_foreignKey'),
-    new ModelAttribute('_intermediate', typeof ActiveRecord),
-    new ModelAttribute('_key'),
-    new ModelAttribute('_label'),
-    new ModelAttribute('_property'),
-    new ModelAttribute('_type', 'number'),
-  ];
-
   constructor(values?: any, attributes?: ModelAttribute[]) {
-    super(values, attributes);
+    this._child = values._child;
+    this._foreignKey = values._foreignKey;
+    this._intermediate = values._intermediate;
+    this._key = values._key;
     this._label = this._formatLabel(values._label);
+    this._property = values._property;
+    this._type = values._type;
   }
 
   private _formatLabel(string: string): Label {
@@ -92,14 +87,24 @@ export class ActiveRecordRelation extends Model {
     }
   }
 
-  private _initHasOne(model, condition) {
+  private _initHasOne(model: ActiveRecord, condition) {
     // add property to class
-    model.class.addAttributes([new ModelAttribute(this._property, 'string')]);
-    model.setAttribute(this._property, null);
+    const attribute = new ModelAttribute(this._property, 'string');
+    model.class.addAttributes([attribute]);
+    attribute.init(model);
+    model.setAttribute(this._property, model.getAttribute(this._property) || null);
 
-    Object.defineProperty(model, this._label.original, {
-      get: () => this._child.findOne(model[this._property]),
-    });
+    if (!model.hasOwnProperty(this._label.original)) {
+      Object.defineProperty(model, this._label.original, {
+        get: () => this._child.findOne(model.getAttribute(this._property)),
+      });
+    }
+
+    if (!model.hasOwnProperty(this._property)) {
+      Object.defineProperty(model, this._property, {
+        get: () => model.getAttribute(this._property),
+      });
+    }
 
     // add `setChild()` method
     model['set' + this._label.capitalizedSingular] = async (object: any) => {
@@ -107,32 +112,36 @@ export class ActiveRecordRelation extends Model {
         object = new this._child(object);
       }
       await object.save();
-      model[this._property] = object[this._child.config.identifier];
+      model.setAttribute(this._property, object.getAttribute(this._child.config.identifier));
+      return object;
     }
   }
 
-  private _initHasMany(model, condition) {
+  private _initHasMany(model: ActiveRecord, condition) {
     // add foreign property to child class
-    this._child.addAttributes([new ModelAttribute(this._property, 'foreignKey')]);
+    const attribute = new ModelAttribute(this._property, 'foreignKey');
+    this._child.addAttributes([attribute]);
+    attribute.init(model);
 
-    // set getter `child` property
+    // set getter `children` property
     Object.defineProperty(model, this._label.plural, {
       get: async () => {
         await this._child.init();
-        condition[this._property] = model[this._child.config.identifier];
+        condition[this._property] = model.getAttribute(this._child.config.identifier);
         return await new model.class.config.queryClass(this._child).where(condition).all();
       },
     });
 
     // add `getChild()` method
     model['get' + this._label.capitalizedPlural] = async () => {
-      condition[this._property] = model[this._child.config.identifier];
+      condition[this._property] = model.getAttribute(this._child.config.identifier);
       return await new model.class.config.queryClass(this._child).where(condition);
     };
 
     // add `addChild()` method
     model['add' + this._label.capitalizedSingular] = async (object: any) => {
-      return model['add' + this._label.capitalizedPlural]([object]);
+      const res = await model['add' + this._label.capitalizedPlural]([object]);
+      return res[0];
     }
 
     // add `addChildren()` method
@@ -143,7 +152,7 @@ export class ActiveRecordRelation extends Model {
 
       // set parent model id in children models
       objects = objects.map((object) => {
-        object[this._property] = model[this._child.config.identifier];
+        object[this._property] = model.getAttribute(this._child.config.identifier);
         return object;
       });
 
@@ -152,31 +161,35 @@ export class ActiveRecordRelation extends Model {
     }
   }
 
-  private _initManyToMany(model, condition) {
+  private _initManyToMany(model: ActiveRecord, condition) {
     // add foreign property to intermediate class
-    this._intermediate.addAttributes([new ModelAttribute(this._foreignKey, 'foreignKey')]);
+    const attribute = new ModelAttribute(this._foreignKey, 'foreignKey');
+    this._intermediate.addAttributes([attribute]);
+    attribute.init(model);
 
-    // set getter `child` property
-    Object.defineProperty(model, this._label.plural, {
-      get: async () => {
-        await this._child.init();
-        condition[this._key] = model.getAttribute(model.class.config.identifier);
-        const res = await this._intermediate.find()
-          .where(condition)
-          .fields([this._foreignKey])
-          .all(false);
-        if (!res.length) {
-          return [];
+    // set getter `children` property
+    if (!model.hasOwnProperty(this._label.plural)) {
+      Object.defineProperty(model, this._label.plural, {
+        get: async () => {
+          await this._child.init();
+          condition[this._key] = model.getAttribute(model.class.config.identifier);
+          const res = await this._intermediate.find()
+            .where(condition)
+            .fields([this._foreignKey])
+            .all(false);
+          if (!res.length) {
+            return [];
+          }
+
+          let ids = res.map((doc) => doc[this._foreignKey]).filter(Boolean);
+          let queryCondition = {};
+          queryCondition[this._child.config.identifier] = { $in: ids };
+          return await new model.class.config.queryClass(this._child)
+            .where(queryCondition)
+            .all();
         }
-
-        let ids = res.map((doc) => doc.getAttribute(this._foreignKey)).filter(Boolean);
-        let queryCondition = {};
-        queryCondition[this._child.config.identifier] = { $in: ids };
-        return await new model.class.config.queryClass(this._child)
-          .where(queryCondition)
-          .all();
-      }
-    });
+      });
+    }
 
     // add `getChild()` method
     model['get' + this._label.capitalizedPlural] = async () => {
@@ -189,7 +202,7 @@ export class ActiveRecordRelation extends Model {
         return [];
       }
 
-      let ids = res.map((doc) => doc.getAttribute(this._foreignKey)).filter(Boolean);
+      let ids = res.map((doc) => doc[this._foreignKey]).filter(Boolean);
       let queryCondition = {};
       queryCondition[this._child.config.identifier] = { $in: ids };
       return await new model.class.config.queryClass(this._child)

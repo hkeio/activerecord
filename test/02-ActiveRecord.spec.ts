@@ -71,20 +71,25 @@ export class TestRecord extends ActiveRecord {
 
 class Boo extends TestRecord {
   static _tableName = 'Boo';
+  foos?: Foo[];
+  public static _attributes: ModelAttribute[] = [];
+  protected static _relations: ActiveRecordRelation[] = []
 }
 class Bar extends TestRecord {
-  boo: string;
   static _tableName = 'Bar';
-
-  public static _attributes: ModelAttribute[] = [
-    new ModelAttribute('boo')
-  ];
+  foos?: Foo[];
+  public static _attributes: ModelAttribute[] = [];
+  protected static _relations: ActiveRecordRelation[] = []
 }
 class Foo_Bar extends TestRecord {
   static _tableName = 'Foo_Bar';
+  public static _attributes: ModelAttribute[] = [];
 }
 class FooChild extends TestRecord {
   static _tableName = 'FooChild';
+  foo?: Foo;
+  public static _attributes: ModelAttribute[] = [];
+  protected static _relations: ActiveRecordRelation[] = []
 }
 class Foo extends TestRecord {
   foo?: string;
@@ -92,17 +97,17 @@ class Foo extends TestRecord {
 
   bars?: Bar[];
   getBars?: () => Promise<ActiveQuery>;
-  addBar?: (object: any | Bar) => Promise<this>;
-  addBars?: (pbjects: any[] | Bar[]) => Promise<this[]>;
+  addBar?: (object: any | Bar) => Promise<Bar>;
+  addBars?: (pbjects: any[] | Bar[]) => Promise<Bar[]>;
 
   fooChildrens?: FooChild[];
   getFooChildrens?: () => Promise<ActiveQuery>;
-  addFooChildren?: (object: any | FooChild) => Promise<this>;
-  addFooChildrens?: (objects: any[] | FooChild[]) => Promise<this[]>;
+  addFooChildren?: (object: any | FooChild) => Promise<FooChild>;
+  addFooChildrens?: (objects: any[] | FooChild[]) => Promise<FooChild[]>;
 
   boo?: Boo;
   boo_id?: string;
-  setBoo?: (object: any | Boo) => Promise<void>;
+  setBoo?: (object: any | Boo) => Promise<Boo>;
 
   static _tableName = 'Foo';
 
@@ -117,6 +122,10 @@ class Foo extends TestRecord {
     ActiveRecordRelation.hasOne('boo', Boo, 'boo_id')
   ];
 }
+
+Boo.addRelation(ActiveRecordRelation.hasMany('foo', Foo, 'boo_id'));
+Bar.addRelation(ActiveRecordRelation.manyToMany('foos', Foo, Foo_Bar, 'bar_id', 'foo_id'));
+FooChild.addRelation(ActiveRecordRelation.hasOne('foo', Foo, 'foo_id'));
 
 let values = {
   foo: "bar",
@@ -154,8 +163,7 @@ describe('ActiveRecord', () => {
     equal(typeof foo.save, 'function');
 
     // attributes
-    equal(foo.hasOwnProperty('foo'), true);
-    equal(foo.hasOwnProperty('goo'), true);
+    equal(foo.boo_id, null);
 
     // save
     equal(await foo.save() instanceof Foo, true);
@@ -171,7 +179,8 @@ describe('ActiveQuery', () => {
       .fields(['goo'])
       .sort(['goo'])
       .limit(1, 1)
-      .where({ $gt: { goo: 1 } });
+      .where({ $gt: { goo: 1 } })
+      .where({ foo: 'bar' });
     equal(query instanceof TestQuery, true);
     equal(typeof query.fields, 'function');
     equal(typeof query.sort, 'function');
@@ -184,7 +193,7 @@ describe('ActiveQuery', () => {
       fields: ['goo'],
       limit: { start: 1, end: 1 },
       sort: ['goo'],
-      where: { '$gt': { goo: 1 } }
+      where: { $gt: { goo: 1 }, foo: 'bar' }
     });
   });
 
@@ -192,10 +201,9 @@ describe('ActiveQuery', () => {
 
 describe('ActiveRecordRelation', () => {
 
-  it('should create methods and properties', async () => {
-    // many to many relation
+  it('manyToMany', async () => {
     equal(foo.bars instanceof Promise, true);
-    // equal(foo.getBars() instanceof Promise, true);
+    equal(foo.getBars() instanceof Promise, true);
     equal(typeof foo.getBars, 'function');
     equal(typeof foo.addBar, 'function');
     equal(typeof foo.addBars, 'function');
@@ -212,26 +220,48 @@ describe('ActiveRecordRelation', () => {
     equal(await foo.addBar({}) instanceof Bar, true);
     equal(await foo.addBar(new Bar({})) instanceof Bar, true);
     equal((await foo.bars).length, 5); // only 5 because `bar` can only be added once
+    equal((await bar.foos).length, 1);
+    equal((await bar.foos)[0] instanceof Foo, true);
     equal((await Foo_Bar.findAll()).length, 5);
     const barsQuery = await foo.getBars();
     equal(barsQuery instanceof TestQuery, true);
     equal(barsQuery.params.where[Bar.config.identifier].$in.length, 5);
+  });
 
-    // has many relation
+  it('hasMany', async () => {
     equal(foo.fooChildrens instanceof Promise, true);
     equal(foo.getFooChildrens() instanceof Promise, true);
     equal(typeof foo.getFooChildrens, 'function');
     equal(typeof foo.addFooChildren, 'function');
     equal(typeof foo.addFooChildrens, 'function');
-    // @todo: add more tests for *has many relations*
-    console.log('@todo: add more tests for *has many relations*');
+    equal((await foo.fooChildrens).length, 0);
 
-    // has one relations
+    const goo = await new Foo().save();
+    const fooChild = await foo.addFooChildren({});
+    equal(fooChild instanceof FooChild, true);
+    equal((await foo.addFooChildrens([{}]))[0] instanceof FooChild, true);
+    equal((await goo.addFooChildrens([{}]))[0] instanceof FooChild, true);
+    equal((await foo.fooChildrens).length, 2);
+    equal((await goo.fooChildrens).length, 1);
+    equal((await foo.addFooChildren({})).hasOwnProperty('foo_id'), true);
+    equal((await fooChild.foo) instanceof Foo, true);
+    const fooChildrenQuery = await foo.getFooChildrens();
+    equal(fooChildrenQuery instanceof TestQuery, true);
+    equal(fooChildrenQuery.params.where.foo_id, foo.id);
+  });
+
+  it('hasOne', async () => {
     equal(foo.hasOwnProperty('boo'), true);
     equal(typeof foo.setBoo, 'function');
-    // @todo: add more tests for *has one relations*
-    console.log('@todo: add more tests for *has one relations*');
 
+    const boo = new Boo();
+    equal((await foo.setBoo(boo)) instanceof Boo, true);
+    equal(foo.getAttribute('boo_id'), boo.id);
+    equal(foo.boo_id, boo.id);
+    equal((await foo.boo) instanceof Boo, true);
+    equal((await foo.boo).id, boo.id);
+    await foo.save();
+    equal((await boo.foos).length, 1);
   });
 
 });

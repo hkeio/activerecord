@@ -22,9 +22,6 @@ module.exports = {
       exclude: `${root}/node_modules`,
       loader: 'ts-loader'
     }]
-  }, plugins: [
-    new UglifyJsPlugin({
-      parallel: true
-    }),
-  ]
+  },
+  devtool: "inline-source-map"
 };

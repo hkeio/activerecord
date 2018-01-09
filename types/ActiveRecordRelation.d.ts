@@ -1,6 +1,6 @@
-import { Model, ModelAttribute } from './Model';
+import { ModelAttribute } from './Model';
 import { ActiveRecord } from './ActiveRecord';
-export declare class ActiveRecordRelation extends Model {
+export declare class ActiveRecordRelation {
     private _child;
     private _foreignKey;
     private _intermediate;
@@ -8,7 +8,6 @@ export declare class ActiveRecordRelation extends Model {
     private _label;
     private _property;
     private _type;
-    protected static _attributes: ModelAttribute[];
     constructor(values?: any, attributes?: ModelAttribute[]);
     private _formatLabel(string);
     static hasOne(label: string, child: typeof ActiveRecord, property: string): ActiveRecordRelation;

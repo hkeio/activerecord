@@ -65,7 +65,9 @@ export abstract class ActiveQuery {
   }
 
   public where(condition: any = {}) {
-    this._params.where = condition;
+    Object.keys(condition).forEach((key) => {
+      this._params.where[key] = condition[key];
+    });
     return this;
   }
 
