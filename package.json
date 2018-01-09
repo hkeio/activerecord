@@ -8,7 +8,24 @@
     "build": "webpack",
     "preversion": "npm test",
     "postversion": "git push && npm publish",
-    "test": "mocha -r ts-node/register test/*.spec.ts && npm run build"
+    "test": "nyc mocha && npm run build"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "repository": {
     "type": "git",
@@ -25,6 +42,8 @@
     "@types/node": "^8.5.8",
     "app-root-path": "^2.0.1",
     "mocha": "^3.4.2",
+    "nyc": "^11.4.1",
+    "source-map-support": "^0.5.0",
     "ts-loader": "^3.2.0",
     "ts-node": "^3.3.0",
     "typescript": "^2.6.2",
