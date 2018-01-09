@@ -21,14 +21,14 @@
   },
   "homepage": "https://github.com/hkeio/activerecord#readme",
   "devDependencies": {
-    "@types/mocha": "^2.2.44",
-    "@types/node": "^8.5.2",
+    "@types/mocha": "^2.2.46",
+    "@types/node": "^8.5.8",
     "app-root-path": "^2.0.1",
     "mocha": "^3.4.2",
     "ts-loader": "^3.2.0",
     "ts-node": "^3.3.0",
     "typescript": "^2.6.2",
-    "uglifyjs-webpack-plugin": "^1.1.5",
+    "uglifyjs-webpack-plugin": "^1.1.6",
     "uuid": "^3.1.0",
     "webpack": "^3.10.0"
   }
