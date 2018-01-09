@@ -179,7 +179,8 @@ describe('ActiveQuery', () => {
       .fields(['goo'])
       .sort(['goo'])
       .limit(1, 1)
-      .where({ $gt: { goo: 1 } });
+      .where({ $gt: { goo: 1 } })
+      .where({ foo: 'bar' });
     equal(query instanceof TestQuery, true);
     equal(typeof query.fields, 'function');
     equal(typeof query.sort, 'function');
@@ -192,7 +193,7 @@ describe('ActiveQuery', () => {
       fields: ['goo'],
       limit: { start: 1, end: 1 },
       sort: ['goo'],
-      where: { '$gt': { goo: 1 } }
+      where: { $gt: { goo: 1 }, foo: 'bar' }
     });
   });
 
@@ -259,6 +260,7 @@ describe('ActiveRecordRelation', () => {
     equal(foo.boo_id, boo.id);
     equal((await foo.boo) instanceof Boo, true);
     equal((await foo.boo).id, boo.id);
+    await foo.save();
     equal((await boo.foos).length, 1);
   });
 
