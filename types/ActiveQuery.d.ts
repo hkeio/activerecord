@@ -2,15 +2,7 @@ import { ActiveRecord } from './ActiveRecord';
 export declare abstract class ActiveQuery {
     private _db;
     private _model;
-    protected _params: {
-        fields: string[];
-        limit: {
-            start: number;
-            end: number;
-        };
-        sort: string[];
-        where: any;
-    };
+    private _params;
     constructor(model: typeof ActiveRecord);
     readonly params: {
         fields: string[];
