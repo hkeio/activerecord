@@ -4,7 +4,7 @@ export abstract class ActiveQuery {
 
   private _db: any;
   private _model: typeof ActiveRecord & any;
-  private _params: {
+  protected _params: {
     fields: string[],
     limit: {
       start: number,
